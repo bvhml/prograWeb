@@ -61,7 +61,7 @@ const PirateTheme = {
     ...rawTheme.palette,
     background: {
       ...rawTheme.palette.background,
-      default: rawTheme.palette.common.white,
+      default: '#2c2b2b',
       placeholder: grey[200],
     },
   },
@@ -102,6 +102,7 @@ const PirateTheme = {
     subtitle1: {
       ...rawTheme.typography.subtitle1,
       fontSize: 18,
+      textTransform: 'uppercase',
     },
     body1: {
       ...rawTheme.typography.body2,

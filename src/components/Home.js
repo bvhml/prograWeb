@@ -16,6 +16,7 @@ const useStyles = makeStyles(theme => ({
       margin: ` 10px auto 10px auto `,
       maxWidth: 500,
       minWidth: 500,
+      backgroundColor: '#ebebeb',
     },
     image: {
       width: 128,
@@ -58,12 +59,12 @@ function Home(){
                 </Grid>
                 <Grid item>
                     <Typography variant="body2" style={{ cursor: 'pointer' }}>
-                    
+                    {person.gender}
                     </Typography>
                 </Grid>
                 </Grid>
                 <Grid item>
-                <Typography variant="subtitle1">{person.variant}</Typography>
+                <Typography variant="subtitle1">{person.nat}</Typography>
                 </Grid>
             </Grid>
             </Grid>
