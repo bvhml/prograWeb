@@ -1,6 +1,7 @@
 export const people =
 [
     {
+        "pk":"1",
         "gender": "male",
         "name": {
             "title": "mr",
@@ -20,6 +21,7 @@ export const people =
         "nat": "ES"
     },
     {
+        "pk":"2",
         "gender": "female",
         "name": {
             "title": "mrs",
@@ -39,6 +41,7 @@ export const people =
         "nat": "ES"
     },
     {
+        "pk":"3",
         "gender": "female",
         "name": {
             "title": "mademoiselle",
@@ -58,6 +61,7 @@ export const people =
         "nat": "CH"
     },
     {
+        "pk":"4",
         "gender": "male",
         "name": {
             "title": "mr",
@@ -77,6 +81,7 @@ export const people =
         "nat": "ES"
     },
     {
+        "pk":"5",
         "gender": "male",
         "name": {
             "title": "mr",
