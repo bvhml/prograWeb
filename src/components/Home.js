@@ -11,8 +11,9 @@ import Button from '@material-ui/core/Button';
 import Slide from '@material-ui/core/Slide';
 import Person from './Person'
 import EditPerson from './EditPerson'
-import Icon from '@material-ui/core/Icon';
+import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
+import Tooltip from '@material-ui/core/Tooltip';
 
 
 const useStyles = makeStyles(theme => ({
@@ -69,6 +70,17 @@ const useStyles = makeStyles(theme => ({
     menu: {
       width: 200,
     },
+    headerBar: {
+      background: 'transparent',
+      //position: '-webkit-sticky',
+      //position: 'sticky',
+      top: 20,
+      bottom: 20, 
+      paddingTop: '40px',
+      paddingBottom: '40px',
+      zIndex: 5,
+      justifyContent:'center',
+    },
   }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -77,24 +89,25 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 function Home(){
     
+    const emptyPerson =  {pk:'',gender:'',name:{title:'',first:'',last:'',},email:'',id:{name:'',value:''},picture:{large:'',medium:'',thumbnail:''},nat:''};
     const [ edit, setEdit ] = useState(false);
     const [ nuevo, setNuevo ] = useState(false);
     const [ id, setId ] = useState(0);
+    const [ countP, setcountP] = useState(6);
     const [ eliminar, setEliminar ] = useState(false);
     const [ editPerson, setEditPerson ] = useState({pk:'',gender:'',name:{title:'',first:'',last:'',},email:'',id:{name:'',value:''},picture:{large:'',medium:'',thumbnail:''},nat:''});
-    const [ data, setData ] = useState({pk:'',gender:'',name:{title:'',first:'',last:'',},email:'',id:{name:'',value:''},picture:{large:'',medium:'',thumbnail:''},nat:''});
+    //const [ data, setData ] = useState({pk:'',gender:'',name:{title:'',first:'',last:'',},email:'',id:{name:'',value:''},picture:{large:'',medium:'',thumbnail:''},nat:''});
     
     function getPeopleLocalStorage(){
       return JSON.parse(localStorage.getItem('people'));
     }
 
     function handleDelete(index) {
-     setId(index);
+      setId(index);
       setEliminar(true);
     }
 
     useEffect(() => {
-
     },[editPerson]);
 
     function handleEdit(index) {
@@ -120,42 +133,50 @@ function Home(){
         nat:persona.nat
       }));
 
-      setData(data => ({...data, 
-        gender:persona.gender,
-        pk:persona.pk,
-        name:{
-          title:persona.name.title,
-          first:persona.name.first,
-          last:persona.name.last},
-        email:persona.email,
-        id:{
-          name:persona.id.name,
-          value:persona.id.value
-        },
-        picture:{
-          large:persona.picture.large,
-          medium:persona.picture.medium,
-          thumbnail:persona.picture.thumbnail
-        },
-        nat:persona.nat
-      }));
-
       setEdit(true);
     }
 
-    function handleClose(){
-      replaceObject(data);
-      setEdit(false);
+    function handleClose(i){
+
+      if (i === 1) {
+        replaceObject(editPerson);
+      }
+
+      //Nuevo Registro
+      if ((editPerson.pk === '') && (i === 1)) {
+        setcountP(countP + 1);
+        setEditPerson({...editPerson,'pk':countP});
+        addObject(editPerson);
+        setNuevo(false);
+      }
+      else{
+        editPerson.pk === '' ?  setNuevo(false):setEdit(false);
+      }
+
+      setEditPerson(emptyPerson);
+      
+    }
+
+    const handleChangeField = (name, mid) => event => {
+      console.log(event.target.value);
+      if (mid !== '') {
+        setEditPerson({ ...editPerson, [name]: { ...editPerson[name], [mid]: event.target.value} }); 
+      }
+      else{
+        setEditPerson({ ...editPerson, [name]: event.target.value }); 
+      }
+    };
+
+    function handleNuevo(i){
+      setNuevo(true);
     }
 
     function handleCloseDeleteYes(){
       var filtered = getPeopleLocalStorage().filter(e => e.pk !== id); 
       localStorage.setItem('people',JSON.stringify(filtered));
-      setData(data => ({
-        ...data,filtered
-      }));
       setEliminar(false);
     }
+
     function handleCloseDeleteNo(){
       setEliminar(false);
     }
@@ -174,15 +195,12 @@ function Home(){
       
     }
 
-    const handleChangeField = (name,mid) => event => {
-        if (mid !== '') {
-          setData({ ...data, [name]: {...data[name], [mid]: event.target.value} }); 
-        }
-        else{
-          setData({ ...data, [name]: event.target.value }); 
-        }
-        
-    };
+    function addObject(datos){
+      console.log(datos);
+      let actual = getPeopleLocalStorage();
+      actual.push(datos);
+      localStorage.setItem('people',JSON.stringify(actual));
+    }
 
     const classes = useStyles();
     const World = getPeopleLocalStorage().map(person => {
@@ -191,13 +209,17 @@ function Home(){
 
     return (
       <Grid container className={classes.rootContainer}>
-      <Fab color="secondary" aria-label="edit" className={classes.iconEdit}>
-        
-      </Fab>
+        <Grid container item className={classes.headerBar} >
+        <Tooltip title="Add" aria-label="add">
+          <Fab color="secondary" aria-label="edit" className={classes.iconEdit} onClick={handleNuevo}>
+            <AddIcon/>
+          </Fab>
+        </Tooltip>
+        </Grid>
       { World }
         <Dialog
           open={edit}
-          onClose={handleClose}
+          onClose={() => handleClose(0)}
           TransitionComponent={Transition}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
@@ -208,13 +230,16 @@ function Home(){
           <EditPerson  person={editPerson} classes={classes} handleChangeField={handleChangeField}/>
           </DialogContent>
           <DialogActions>
-          <Button onClick={handleClose} autoFocus>
+          <Button onClick={() => handleClose(1)} autoFocus>
               Save
+          </Button>
+          <Button onClick={() => handleClose(0)} autoFocus>
+              Cancel
           </Button>
           </DialogActions>
         </Dialog>
         <Dialog
-          open={nuevo}
+          open={eliminar}
           //onClose={handleCloseDelete}
           TransitionComponent={Transition}
           aria-labelledby="alert-dialog-title"
@@ -230,6 +255,27 @@ function Home(){
           </Button>
           <Button onClick={handleCloseDeleteNo} autoFocus>
               No
+          </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={nuevo}
+          onClose={handleClose}
+          TransitionComponent={Transition}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+          disableBackdropClick = {true}
+        >
+          <DialogTitle id="alert-dialog-title">{"New Mode"}</DialogTitle>
+          <DialogContent className={classes.dialogContent}>
+          <EditPerson  person={editPerson} classes={classes} handleChangeField={handleChangeField}/>
+          </DialogContent>
+          <DialogActions>
+          <Button onClick={() => handleClose(1)} autoFocus>
+              Save
+          </Button>
+          <Button onClick={() => handleClose(0)} autoFocus>
+              Cancel
           </Button>
           </DialogActions>
         </Dialog>

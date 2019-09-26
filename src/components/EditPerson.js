@@ -8,17 +8,16 @@ import MenuItem from '@material-ui/core/MenuItem';
 
 const genders = [
     {
-      value: 'Male',
+      value: 'male',
       label: 'M',
     },
     {
-      value: 'Female',
+      value: 'female',
       label: 'F',
     },
   ];
 
 function EditPerson({ person, classes, handleChangeField}){
-
     return (
         <form noValidate autoComplete="off">
             <Grid container item xs={12} md lg={12} key={person.pk} justify = {'center'}>
@@ -94,7 +93,7 @@ function EditPerson({ person, classes, handleChangeField}){
                             />
                         </Grid>
 
-                        <Grid item md={6}>
+                        <Grid item md={9}>
                             <TextField
                             variant="outlined"
                             margin="dense"
@@ -122,19 +121,19 @@ function EditPerson({ person, classes, handleChangeField}){
                             onChange={handleChangeField('nat','')}
                             />
                         </Grid>
-                        <Grid item md={3}>
+                        <Grid item md={12}>
                         <TextField
                             id="gender"
                             select
                             label="Select"
                             //className={classes.textField}
-                            value={person.gender}
+                            value= {person.gender}
                             onChange={handleChangeField('gender','')}
                             SelectProps={{
-                            MenuProps: {
-                                className: classes.menu,
-                            },
-                            }}
+                                MenuProps: {
+                                    className: classes.menu,
+                                },
+                                }}
                             helperText="Please select your gender."
                             margin="normal"
                         >
