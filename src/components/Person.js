@@ -8,13 +8,15 @@ import Fab from '@material-ui/core/Fab';
 import EditIcon from '@material-ui/icons/Edit';
 import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
 import Tooltip from '@material-ui/core/Tooltip';
+import Grow from '@material-ui/core/Grow';
 
 
 
 function Person({ person, classes, handleEdit, handleDelete}){
 
     return (
-        <Grid container item xs={12} md lg={12} key={person.pk} justify = {'center'}>
+        <Grid container item xs={12} md = {6} lg={6} key={person.pk} justify = {'center'} >
+          <Grow in={true}>
             <Paper className={classes.paper} elevation={8}>
             <Grid container item xs={12} justify="flex-end" style ={{backgroundColor:'transparent'}}>
               <Grid container item xs={4} justify="space-evenly" style ={{backgroundColor:'transparent'}}>
@@ -63,6 +65,7 @@ function Person({ person, classes, handleEdit, handleDelete}){
             </Grid>
             </Grid>
             </Paper>
+          </Grow>
         </Grid> 
     );
 }

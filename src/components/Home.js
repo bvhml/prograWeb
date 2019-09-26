@@ -216,7 +216,9 @@ function Home(){
           </Fab>
         </Tooltip>
         </Grid>
-      { World }
+        <Grid container>
+          { World }
+        </Grid>
         <Dialog
           open={edit}
           onClose={() => handleClose(0)}
