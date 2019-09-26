@@ -11,6 +11,8 @@ import Button from '@material-ui/core/Button';
 import Slide from '@material-ui/core/Slide';
 import Person from './Person'
 import EditPerson from './EditPerson'
+import Icon from '@material-ui/core/Icon';
+import Fab from '@material-ui/core/Fab';
 
 
 const useStyles = makeStyles(theme => ({
@@ -64,6 +66,9 @@ const useStyles = makeStyles(theme => ({
       width: 35,
       height: 20,
     },
+    menu: {
+      width: 200,
+    },
   }));
 
 const Transition = React.forwardRef(function Transition(props, ref) {
@@ -73,35 +78,31 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 function Home(){
     
     const [ edit, setEdit ] = useState(false);
+    const [ nuevo, setNuevo ] = useState(false);
+    const [ id, setId ] = useState(0);
     const [ eliminar, setEliminar ] = useState(false);
-    const [ editPerson, setEditPerson ] = useState({gender:'',name:{title:'',first:'',last:'',},email:'',id:{name:'',value:''},picture:{large:'',medium:'',thumbnail:''},nat:''});
-    const [ data, setData ] = useState({});
+    const [ editPerson, setEditPerson ] = useState({pk:'',gender:'',name:{title:'',first:'',last:'',},email:'',id:{name:'',value:''},picture:{large:'',medium:'',thumbnail:''},nat:''});
+    const [ data, setData ] = useState({pk:'',gender:'',name:{title:'',first:'',last:'',},email:'',id:{name:'',value:''},picture:{large:'',medium:'',thumbnail:''},nat:''});
     
     function getPeopleLocalStorage(){
       return JSON.parse(localStorage.getItem('people'));
     }
 
     function handleDelete(index) {
-
-      var filtered = getPeopleLocalStorage().filter(e => e.pk !== index); 
-      localStorage.setItem('people',JSON.stringify(filtered));
-      setData(data => ({
-        ...data,filtered
-      }));
-
+     setId(index);
       setEliminar(true);
     }
 
     useEffect(() => {
 
-    },[eliminar,data]);
+    },[editPerson]);
 
     function handleEdit(index) {
-      
-      console.log(index);
+
       var persona = (getPeopleLocalStorage().filter(e => e.pk === index ))[0];
       setEditPerson(editPerson => ({...editPerson, 
         gender:persona.gender,
+        pk:persona.pk,
         name:{
           title:persona.name.title,
           first:persona.name.first,
@@ -115,14 +116,73 @@ function Home(){
           large:persona.picture.large,
           medium:persona.picture.medium,
           thumbnail:persona.picture.thumbnail
-        }
+        },
+        nat:persona.nat
       }));
+
+      setData(data => ({...data, 
+        gender:persona.gender,
+        pk:persona.pk,
+        name:{
+          title:persona.name.title,
+          first:persona.name.first,
+          last:persona.name.last},
+        email:persona.email,
+        id:{
+          name:persona.id.name,
+          value:persona.id.value
+        },
+        picture:{
+          large:persona.picture.large,
+          medium:persona.picture.medium,
+          thumbnail:persona.picture.thumbnail
+        },
+        nat:persona.nat
+      }));
+
       setEdit(true);
     }
 
     function handleClose(){
-        setEdit(false);
+      replaceObject(data);
+      setEdit(false);
     }
+
+    function handleCloseDeleteYes(){
+      var filtered = getPeopleLocalStorage().filter(e => e.pk !== id); 
+      localStorage.setItem('people',JSON.stringify(filtered));
+      setData(data => ({
+        ...data,filtered
+      }));
+      setEliminar(false);
+    }
+    function handleCloseDeleteNo(){
+      setEliminar(false);
+    }
+
+    function replaceObject(datos){
+      let actual = getPeopleLocalStorage();
+      
+
+      for (let index = 0; index < actual.length; index++) {
+        if (actual[index].pk === datos.pk) {
+          actual.splice(index,1,datos);
+        }
+      }
+
+      localStorage.setItem('people',JSON.stringify(actual));
+      
+    }
+
+    const handleChangeField = (name,mid) => event => {
+        if (mid !== '') {
+          setData({ ...data, [name]: {...data[name], [mid]: event.target.value} }); 
+        }
+        else{
+          setData({ ...data, [name]: event.target.value }); 
+        }
+        
+    };
 
     const classes = useStyles();
     const World = getPeopleLocalStorage().map(person => {
@@ -131,6 +191,9 @@ function Home(){
 
     return (
       <Grid container className={classes.rootContainer}>
+      <Fab color="secondary" aria-label="edit" className={classes.iconEdit}>
+        
+      </Fab>
       { World }
         <Dialog
           open={edit}
@@ -138,14 +201,35 @@ function Home(){
           TransitionComponent={Transition}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
+          disableBackdropClick = {true}
         >
           <DialogTitle id="alert-dialog-title">{"Edit Mode"}</DialogTitle>
           <DialogContent className={classes.dialogContent}>
-          <EditPerson  person={editPerson} classes={classes}/>
+          <EditPerson  person={editPerson} classes={classes} handleChangeField={handleChangeField}/>
           </DialogContent>
           <DialogActions>
           <Button onClick={handleClose} autoFocus>
               Save
+          </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={nuevo}
+          //onClose={handleCloseDelete}
+          TransitionComponent={Transition}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+          disableBackdropClick = {true}
+        >
+          <DialogTitle id="alert-dialog-title">{"Are you sure?"}</DialogTitle>
+          <DialogContent className={classes.dialogContent}>
+          </DialogContent>
+          <DialogActions>
+          <Button onClick={handleCloseDeleteYes} autoFocus>
+              Yes
+          </Button>
+          <Button onClick={handleCloseDeleteNo} autoFocus>
+              No
           </Button>
           </DialogActions>
         </Dialog>
