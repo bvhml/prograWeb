@@ -144,9 +144,17 @@ function Home(){
 
       //Nuevo Registro
       if ((editPerson.pk === '') && (i === 1)) {
+        let temp = editPerson;
+        temp = {
+          ...editPerson,
+          pk:countP,
+        };
         setcountP(countP + 1);
-        setEditPerson({...editPerson,'pk':countP});
-        addObject(editPerson);
+        setEditPerson(editPerson => ({
+          ...editPerson,
+          pk:countP,
+        }));
+        addObject(temp);
         setNuevo(false);
       }
       else{
@@ -158,7 +166,6 @@ function Home(){
     }
 
     const handleChangeField = (name, mid) => event => {
-      console.log(event.target.value);
       if (mid !== '') {
         setEditPerson({ ...editPerson, [name]: { ...editPerson[name], [mid]: event.target.value} }); 
       }
@@ -196,7 +203,7 @@ function Home(){
     }
 
     function addObject(datos){
-      console.log(datos);
+      
       let actual = getPeopleLocalStorage();
       actual.push(datos);
       localStorage.setItem('people',JSON.stringify(actual));
