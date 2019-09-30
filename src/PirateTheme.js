@@ -55,6 +55,12 @@ const PirateTheme = {
         },
       }
     },
+    MuiFab:{
+      root:{
+        color:rawTheme.palette.primary.main
+      },
+      
+    },
   },
 
   palette: {

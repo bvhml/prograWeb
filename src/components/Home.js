@@ -11,6 +11,7 @@ import Button from '@material-ui/core/Button';
 import Slide from '@material-ui/core/Slide';
 import Person from './Person'
 import EditPerson from './EditPerson'
+import ShowPerson from './ShowPerson'
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
 import Tooltip from '@material-ui/core/Tooltip';
@@ -60,6 +61,13 @@ const useStyles = makeStyles(theme => ({
       width: 35,
       height: 20,
     },
+    iconAdd: {
+      '&:hover': {
+        color: blue[100],
+      },
+      width: 80,
+      height: 80,
+    },
     iconDelete: {
       '&:hover': {
         color: red[100],
@@ -92,6 +100,7 @@ function Home(){
     const emptyPerson =  {pk:'',gender:'',name:{title:'',first:'',last:'',},email:'',id:{name:'',value:''},picture:{large:'',medium:'',thumbnail:''},nat:''};
     const [ edit, setEdit ] = useState(false);
     const [ nuevo, setNuevo ] = useState(false);
+    const [ show, setShow ] = useState(false);
     const [ id, setId ] = useState(0);
     const [ countP, setcountP] = useState(6);
     const [ eliminar, setEliminar ] = useState(false);
@@ -157,6 +166,9 @@ function Home(){
         addObject(temp);
         setNuevo(false);
       }
+      else if(i === 2){
+        setShow(false);
+      }
       else{
         editPerson.pk === '' ?  setNuevo(false):setEdit(false);
       }
@@ -178,6 +190,30 @@ function Home(){
       setNuevo(true);
     }
 
+    function showPerson(i){
+      var persona = (getPeopleLocalStorage().filter(e => e.pk === i ))[0];
+      setEditPerson(editPerson => ({...editPerson, 
+        gender:persona.gender,
+        pk:persona.pk,
+        name:{
+          title:persona.name.title,
+          first:persona.name.first,
+          last:persona.name.last},
+        email:persona.email,
+        id:{
+          name:persona.id.name,
+          value:persona.id.value
+        },
+        picture:{
+          large:persona.picture.large,
+          medium:persona.picture.medium,
+          thumbnail:persona.picture.thumbnail
+        },
+        nat:persona.nat
+      }));
+      setShow(true);
+    }
+
     function handleCloseDeleteYes(){
       var filtered = getPeopleLocalStorage().filter(e => e.pk !== id); 
       localStorage.setItem('people',JSON.stringify(filtered));
@@ -190,7 +226,6 @@ function Home(){
 
     function replaceObject(datos){
       let actual = getPeopleLocalStorage();
-      
 
       for (let index = 0; index < actual.length; index++) {
         if (actual[index].pk === datos.pk) {
@@ -211,15 +246,15 @@ function Home(){
 
     const classes = useStyles();
     const World = getPeopleLocalStorage().map(person => {
-    return (<Person person={person} classes={classes} handleDelete={handleDelete} handleEdit={handleEdit} key={person.pk}/>);
+    return (<Person person={person} classes={classes} handleDelete={handleDelete} handleEdit={handleEdit} showPerson={showPerson} key={person.pk}/>);
     });
 
     return (
       <Grid container className={classes.rootContainer}>
         <Grid container item className={classes.headerBar} >
         <Tooltip title="Add" aria-label="add">
-          <Fab color="secondary" aria-label="edit" className={classes.iconEdit} onClick={handleNuevo}>
-            <AddIcon/>
+          <Fab color={'secondary'} aria-label="add" className={classes.iconAdd} onClick={handleNuevo}>
+            <AddIcon style={{width:'50',height:'50'}} />
           </Fab>
         </Tooltip>
         </Grid>
@@ -277,7 +312,7 @@ function Home(){
         >
           <DialogTitle id="alert-dialog-title">{"New Mode"}</DialogTitle>
           <DialogContent className={classes.dialogContent}>
-          <EditPerson  person={editPerson} classes={classes} handleChangeField={handleChangeField}/>
+          <EditPerson  person={editPerson} classes={classes} handleChangeField={handleChangeField} />
           </DialogContent>
           <DialogActions>
           <Button onClick={() => handleClose(1)} autoFocus>
@@ -285,6 +320,24 @@ function Home(){
           </Button>
           <Button onClick={() => handleClose(0)} autoFocus>
               Cancel
+          </Button>
+          </DialogActions>
+        </Dialog>
+        <Dialog
+          open={show}
+          onClose={handleClose}
+          TransitionComponent={Transition}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+          disableBackdropClick = {true}
+        >
+          <DialogTitle id="alert-dialog-title">{"Show Mode"}</DialogTitle>
+          <DialogContent className={classes.dialogContent}>
+          <ShowPerson person={editPerson} classes={classes}/>
+          </DialogContent>
+          <DialogActions>
+          <Button onClick={() => handleClose(2)} autoFocus>
+              Dismiss
           </Button>
           </DialogActions>
         </Dialog>

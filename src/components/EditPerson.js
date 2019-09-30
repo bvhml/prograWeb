@@ -5,7 +5,11 @@ import Fab from '@material-ui/core/Fab';
 import Avatar from '@material-ui/core/Avatar';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
-
+import { email, required } from '../form/validation';
+// eslint-disable-next-line 
+import { Field, Form, FormSpy } from 'react-final-form';
+//import RFTextField from '../form/RFTextField'
+import FormFeedback from '../form/FormFeedback';
 const genders = [
     {
       value: 'male',
@@ -18,7 +22,30 @@ const genders = [
   ];
 
 function EditPerson({ person, classes, handleChangeField}){
+
+    const validate = values => {
+        const errors = required(['email', 'title'], values);
+        //console.log(values);
+        if (!errors.email) {
+          const emailError = email(values.email, values);
+          if (emailError) {
+            errors.email = email(values.email, values);
+          }
+        }
+    
+        return errors;
+      };
+
+      // eslint-disable-next-line 
+      const [sent, setSent] = React.useState(false);
+
+      const handleSubmit = () => {
+        setSent(true);
+      };
+
     return (
+        <Form onSubmit = {handleSubmit} subscription={{ submitting: true }} validate={validate}>
+          {({ handleSubmit2, submitting }) => (
         <form noValidate autoComplete="off">
             <Grid container item xs={12} md lg={12} key={person.pk} justify = {'center'}>
                 <Grid container spacing={2}>
@@ -44,6 +71,8 @@ function EditPerson({ person, classes, handleChangeField}){
                             defaultValue = {person.name.title}
                             onChange={handleChangeField('name','title')}
                             />
+                           
+                            
                         </Grid>
                         
                         <Grid item md={6}>
@@ -91,6 +120,9 @@ function EditPerson({ person, classes, handleChangeField}){
                             defaultValue ={person.email}
                             onChange={handleChangeField('email','')}
                             />
+
+                           
+                            
                         </Grid>
 
                         <Grid item md={9}>
@@ -144,12 +176,22 @@ function EditPerson({ person, classes, handleChangeField}){
                             ))}
                         </TextField>
                         </Grid>
+                        <FormSpy subscription={{ submitError: true }}>
+                            {({ submitError }) =>
+                            submitError ? (
+                                <FormFeedback className={classes.feedback} error>
+                                {submitError}
+                                </FormFeedback>
+                            ) : null
+                            }
+                        </FormSpy>
                     </Grid>
                     </Grid>
                 </Grid>
                 </Grid>
             </Grid> 
-        </form>
+        </form>)}
+        </Form>
     );
 }
 

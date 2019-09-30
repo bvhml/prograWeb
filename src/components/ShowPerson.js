@@ -5,37 +5,19 @@ import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Avatar from '@material-ui/core/Avatar';
 import Fab from '@material-ui/core/Fab';
-import EditIcon from '@material-ui/icons/Edit';
-import DeleteOutlinedIcon from '@material-ui/icons/DeleteOutlined';
-import Tooltip from '@material-ui/core/Tooltip';
 import Grow from '@material-ui/core/Grow';
 
 
 
-function Person({ person, classes, handleEdit, handleDelete, showPerson}){
+function ShowPerson({ person, classes}){
 
     return (
-        <Grid container item xs={12} md = {6} lg={6} key={person.pk} justify = {'center'} >
+        <Grid container item xs={12} md = {12} lg={12} key={person.pk} justify = {'center'} >
           <Grow in={true}>
-            <Paper className={classes.paper} elevation={8}>
-            <Grid container item xs={12} justify="flex-end" style ={{backgroundColor:'transparent'}}>
-              <Grid container item xs={4} justify="space-evenly" style ={{backgroundColor:'transparent'}}>
-              <Tooltip title="Edit" aria-label="edit">
-                <Fab color="primary" aria-label="edit" className={classes.iconEdit} onClick={() => handleEdit(person.pk)}>
-                  <EditIcon />
-                </Fab>
-              </Tooltip>
-              <Tooltip title="Delete" aria-label="delete">
-                <Fab color="primary" aria-label="delete" className={classes.iconDelete} onClick={() => handleDelete(person.pk)}>
-                  <DeleteOutlinedIcon />
-                </Fab>
-              </Tooltip>
-              </Grid>
-            </Grid>
-            
+            <Paper className={classes.paper} elevation={0}>
             <Grid container spacing={2}>
             <Grid item container xs={12} md = {12} justify={'center'}>
-              <Fab className={classes.image} onClick = {() => showPerson(person.pk)}>
+              <Fab className={classes.image}>
               <Avatar alt="complex" src={(person.picture.large)} className={classes.img} />
               </Fab>
             </Grid>
@@ -70,4 +52,4 @@ function Person({ person, classes, handleEdit, handleDelete, showPerson}){
     );
 }
 
-export default withRoot(Person);
+export default withRoot(ShowPerson);
