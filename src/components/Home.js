@@ -17,6 +17,7 @@ import Fab from '@material-ui/core/Fab';
 import Tooltip from '@material-ui/core/Tooltip';
 
 
+
 const useStyles = makeStyles(theme => ({
     root: {
       flexGrow: 1,
@@ -67,6 +68,8 @@ const useStyles = makeStyles(theme => ({
       },
       width: 80,
       height: 80,
+      //position: 'fixed',
+      //top: '0.5vh',
     },
     iconDelete: {
       '&:hover': {
@@ -107,6 +110,9 @@ function Home(){
     const [ editPerson, setEditPerson ] = useState({pk:'',gender:'',name:{title:'',first:'',last:'',},email:'',id:{name:'',value:''},picture:{large:'',medium:'',thumbnail:''},nat:''});
     //const [ data, setData ] = useState({pk:'',gender:'',name:{title:'',first:'',last:'',},email:'',id:{name:'',value:''},picture:{large:'',medium:'',thumbnail:''},nat:''});
     
+
+    
+
     function getPeopleLocalStorage(){
       return JSON.parse(localStorage.getItem('people'));
     }
@@ -252,7 +258,7 @@ function Home(){
     return (
       <Grid container className={classes.rootContainer}>
         <Grid container item className={classes.headerBar} >
-        <Tooltip title="Add" aria-label="add">
+        <Tooltip title="Add New Contact" aria-label="add">
           <Fab color={'secondary'} aria-label="add" className={classes.iconAdd} onClick={handleNuevo}>
             <AddIcon style={{width:'50',height:'50'}} />
           </Fab>
@@ -290,7 +296,7 @@ function Home(){
           aria-describedby="alert-dialog-description"
           disableBackdropClick = {true}
         >
-          <DialogTitle id="alert-dialog-title">{"Are you sure?"}</DialogTitle>
+          <DialogTitle id="alert-dialog-title">{"Are you sure to delete this contact?"}</DialogTitle>
           <DialogContent className={classes.dialogContent}>
           </DialogContent>
           <DialogActions>

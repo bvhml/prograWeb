@@ -46,7 +46,7 @@ function EditPerson({ person, classes, handleChangeField}){
     return (
         <Form onSubmit = {handleSubmit} subscription={{ submitting: true }} validate={validate}>
           {({ handleSubmit2, submitting }) => (
-        <form noValidate autoComplete="off">
+        <form noValidate  autoComplete="off">
             <Grid container item xs={12} md lg={12} key={person.pk} justify = {'center'}>
                 <Grid container spacing={2}>
                 <Grid item container xs={12} md = {12} justify={'center'}>
