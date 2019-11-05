@@ -36,7 +36,7 @@ function ShowPerson({ person, classes}){
                 </Grid>
                 <Grid item>
                     <Typography variant="body2" style={{ cursor: 'pointer' }}>
-                    {person.gender}
+                    {person.gen}
                     </Typography>
                 </Grid>
                 </Grid>

@@ -9,7 +9,7 @@ import { email, required } from '../form/validation';
 // eslint-disable-next-line 
 import { Field, Form, FormSpy } from 'react-final-form';
 //import RFTextField from '../form/RFTextField'
-import FormFeedback from '../form/FormFeedback';
+//import FormFeedback from '../form/FormFeedback';
 const genders = [
     {
       value: 'male',
@@ -155,12 +155,13 @@ function EditPerson({ person, classes, handleChangeField}){
                         </Grid>
                         <Grid item md={12}>
                         <TextField
-                            id="gender"
+                            id="gen"
+                            name="gen"
                             select
                             label="Select"
                             //className={classes.textField}
-                            value= {person.gender}
-                            onChange={handleChangeField('gender','')}
+                            value= {person.gen}
+                            onChange={handleChangeField('gen','')}
                             SelectProps={{
                                 MenuProps: {
                                     className: classes.menu,
@@ -176,15 +177,6 @@ function EditPerson({ person, classes, handleChangeField}){
                             ))}
                         </TextField>
                         </Grid>
-                        <FormSpy subscription={{ submitError: true }}>
-                            {({ submitError }) =>
-                            submitError ? (
-                                <FormFeedback className={classes.feedback} error>
-                                {submitError}
-                                </FormFeedback>
-                            ) : null
-                            }
-                        </FormSpy>
                     </Grid>
                     </Grid>
                 </Grid>
@@ -195,4 +187,4 @@ function EditPerson({ person, classes, handleChangeField}){
     );
 }
 
-export default withRoot(EditPerson);
+export default withRoot(React.memo(EditPerson));

@@ -15,8 +15,8 @@ import ShowPerson from './ShowPerson'
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
 import Tooltip from '@material-ui/core/Tooltip';
-
-
+//import ContactHelpers from '../services/contactsHelpers'
+import axios from 'axios'
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -100,36 +100,37 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 
 function Home(){
     
-    const emptyPerson =  {pk:'',gender:'',name:{title:'',first:'',last:'',},email:'',id:{name:'',value:''},picture:{large:'',medium:'',thumbnail:''},nat:''};
+    const emptyPerson =  { _id:'', pk:'',gen:'',name:{title:'',first:'',last:'',},email:'',id:{name:'',value:''},picture:{large:'',medium:'',thumbnail:''},nat:''};
     const [ edit, setEdit ] = useState(false);
     const [ nuevo, setNuevo ] = useState(false);
     const [ show, setShow ] = useState(false);
     const [ id, setId ] = useState(0);
     const [ countP, setcountP] = useState(6);
     const [ eliminar, setEliminar ] = useState(false);
-    const [ editPerson, setEditPerson ] = useState({pk:'',gender:'',name:{title:'',first:'',last:'',},email:'',id:{name:'',value:''},picture:{large:'',medium:'',thumbnail:''},nat:''});
-    //const [ data, setData ] = useState({pk:'',gender:'',name:{title:'',first:'',last:'',},email:'',id:{name:'',value:''},picture:{large:'',medium:'',thumbnail:''},nat:''});
+    const [ editPerson, setEditPerson ] = useState({ _id:'', pk:'',gen:'',name:{title:'',first:'',last:'',},email:'',id:{name:'',value:''},picture:{large:'',medium:'',thumbnail:''},nat:''});
+    const [ data, setData ] = useState(null);
     
-
-    
-
-    function getPeopleLocalStorage(){
-      return JSON.parse(localStorage.getItem('people'));
-    }
-
     function handleDelete(index) {
       setId(index);
       setEliminar(true);
     }
+    useEffect(
+      () => {
+        axios.get('http://localhost:3030/api/v1/contacts/')
+            .then((response) => {
+                //console.log(response.data);
+                setData(response.data); 
+            })
+            .catch(function (error) {
+                //console.log(error);
+            });
+    },[show, edit]);
 
-    useEffect(() => {
-    },[editPerson]);
-
-    function handleEdit(index) {
-
-      var persona = (getPeopleLocalStorage().filter(e => e.pk === index ))[0];
-      setEditPerson(editPerson => ({...editPerson, 
-        gender:persona.gender,
+    async function handleEdit(index) {
+      var persona = (data.filter(e => e._id === index ))[0];
+      setEditPerson(editPerson => ({...editPerson,
+        _id: persona._id, 
+        gen:persona.gen,
         pk:persona.pk,
         name:{
           title:persona.name.title,
@@ -153,8 +154,11 @@ function Home(){
 
     function handleClose(i){
 
-      if (i === 1) {
+      if ((editPerson.pk !== '') && (i === 1)) {
         replaceObject(editPerson);
+        setEdit(false);
+        setEditPerson(emptyPerson);
+        return true;
       }
 
       //Nuevo Registro
@@ -180,16 +184,22 @@ function Home(){
       }
 
       setEditPerson(emptyPerson);
+
+      
       
     }
-
+    
     const handleChangeField = (name, mid) => event => {
+
+      
+
       if (mid !== '') {
-        setEditPerson({ ...editPerson, [name]: { ...editPerson[name], [mid]: event.target.value} }); 
+        setEditPerson(e => ({ ...e, [name]: { ...e[name], [mid]: event.target.value} })); 
       }
       else{
-        setEditPerson({ ...editPerson, [name]: event.target.value }); 
+        setEditPerson(e => ({ ...e, [name]: event.target.value })); 
       }
+      
     };
 
     function handleNuevo(i){
@@ -197,9 +207,10 @@ function Home(){
     }
 
     function showPerson(i){
-      var persona = (getPeopleLocalStorage().filter(e => e.pk === i ))[0];
-      setEditPerson(editPerson => ({...editPerson, 
-        gender:persona.gender,
+      var persona = (data.filter(e => e._id === i ))[0];
+      setEditPerson(editPerson => ({...editPerson,
+        _id: persona._id,  
+        gen:persona.gen,
         pk:persona.pk,
         name:{
           title:persona.name.title,
@@ -221,8 +232,21 @@ function Home(){
     }
 
     function handleCloseDeleteYes(){
-      var filtered = getPeopleLocalStorage().filter(e => e.pk !== id); 
-      localStorage.setItem('people',JSON.stringify(filtered));
+      axios.delete('http://localhost:3030/api/v1/contacts/delete/' + id)
+      .then(function (response) {
+        axios.get('http://localhost:3030/api/v1/contacts/')
+            .then((response) => {
+                //console.log(response.data);
+                setData(response.data); 
+            })
+            .catch(function (error) {
+                //console.log(error);
+            });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
       setEliminar(false);
     }
 
@@ -231,30 +255,68 @@ function Home(){
     }
 
     function replaceObject(datos){
-      let actual = getPeopleLocalStorage();
 
-      for (let index = 0; index < actual.length; index++) {
-        if (actual[index].pk === datos.pk) {
-          actual.splice(index,1,datos);
-        }
-      }
+      return axios.put('http://localhost:3030/api/v1/contacts/update',datos)
+      .then(function (response) {
+        //console.log(response);
+        axios.get('http://localhost:3030/api/v1/contacts/')
+            .then((response) => {
+                //console.log(response.data);
+                setData(response.data); 
+            })
+            .catch(function (error) {
+                //console.log(error);
+            });
+        setEdit(false);
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
 
-      localStorage.setItem('people',JSON.stringify(actual));
+      
       
     }
 
-    function addObject(datos){
-      
-      let actual = getPeopleLocalStorage();
-      actual.push(datos);
-      localStorage.setItem('people',JSON.stringify(actual));
+    async function addObject(datos){
+      //console.log(datos);
+      return axios.post('http://localhost:3030/api/v1/contacts/add', datos)
+      .then(function (response) {
+        //console.log(response);
+        axios.get('http://localhost:3030/api/v1/contacts/')
+            .then((response) => {
+                //console.log(response.data);
+                setData(response.data); 
+            })
+            .catch(function (error) {
+                //console.log(error);
+            });
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
     }
 
     const classes = useStyles();
-    const World = getPeopleLocalStorage().map(person => {
-    return (<Person person={person} classes={classes} handleDelete={handleDelete} handleEdit={handleEdit} showPerson={showPerson} key={person.pk}/>);
-    });
-
+  
+    var World = null;
+    
+    if (data !== null) {
+      World = () => { 
+  
+        let result = data.map(person => {
+          return (<Person person={person} classes={classes} handleDelete={handleDelete} handleEdit={handleEdit} showPerson={showPerson} key={person.pk}/>);
+          });
+  
+        return (<Grid container>{ result } </Grid>)
+  
+        
+      };
+    }
+    else{
+      World = () => { 
+        return (<div> </div>)
+      };
+    }
     return (
       <Grid container className={classes.rootContainer}>
         <Grid container item className={classes.headerBar} >
@@ -264,9 +326,7 @@ function Home(){
           </Fab>
         </Tooltip>
         </Grid>
-        <Grid container>
-          { World }
-        </Grid>
+          <World/>
         <Dialog
           open={edit}
           onClose={() => handleClose(0)}
@@ -283,7 +343,7 @@ function Home(){
           <Button onClick={() => handleClose(1)} autoFocus>
               Save
           </Button>
-          <Button onClick={() => handleClose(0)} autoFocus>
+          <Button onClick={() => handleClose(0)}>
               Cancel
           </Button>
           </DialogActions>
