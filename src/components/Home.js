@@ -15,8 +15,10 @@ import ShowPerson from './ShowPerson'
 import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
 import Tooltip from '@material-ui/core/Tooltip';
+import CircularProgress from '@material-ui/core/CircularProgress';
 //import ContactHelpers from '../services/contactsHelpers'
 import axios from 'axios'
+//import { CONNREFUSED } from 'dns';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -51,6 +53,9 @@ const useStyles = makeStyles(theme => ({
       width: 120,
       height: 120,
       
+    },
+    progress:{
+      margin: ` 100px auto 10px auto `,
     },
     avatar: {
       margin: 10,
@@ -109,7 +114,9 @@ function Home(){
     const [ eliminar, setEliminar ] = useState(false);
     const [ editPerson, setEditPerson ] = useState({ _id:'', pk:'',gen:'',name:{title:'',first:'',last:'',},email:'',id:{name:'',value:''},picture:{large:'',medium:'',thumbnail:''},nat:''});
     const [ data, setData ] = useState(null);
-    
+    const classes = useStyles();
+    var World = null;
+
     function handleDelete(index) {
       setId(index);
       setEliminar(true);
@@ -189,9 +196,10 @@ function Home(){
       
     }
     
+    console.log("Parent Render");
     const handleChangeField = (name, mid) => event => {
-
-      
+      event.preventDefault();
+      event.persist();
 
       if (mid !== '') {
         setEditPerson(e => ({ ...e, [name]: { ...e[name], [mid]: event.target.value} })); 
@@ -296,9 +304,7 @@ function Home(){
       });
     }
 
-    const classes = useStyles();
-  
-    var World = null;
+    
     
     if (data !== null) {
       World = () => { 
@@ -314,7 +320,7 @@ function Home(){
     }
     else{
       World = () => { 
-        return (<div> </div>)
+        return (<CircularProgress disableShrink className={ classes.progress } color="secondary" size={"75px"}/>)
       };
     }
     return (
