@@ -1,6 +1,8 @@
 {
   "name": "progra-web",
-  "version": "0.1.0",
+  "description": "progra-web",
+  "license": "MIT",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@material-ui/core": "^4.4.3",
@@ -35,5 +37,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bvhml/prograWeb"
   }
 }
