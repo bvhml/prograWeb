@@ -16,9 +16,14 @@ import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
 import Tooltip from '@material-ui/core/Tooltip';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
 //import ContactHelpers from '../services/contactsHelpers'
 import axios from 'axios'
 //import { CONNREFUSED } from 'dns';
+
+
+const ecs_END_POINT = 'http://3.92.211.28:3030';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -26,7 +31,7 @@ const useStyles = makeStyles(theme => ({
     },
     rootContainer: {
       justifyContent: 'center',
-      padding:'6vh',
+      padding:'2vh',
       flexDirection: 'column',
       alignItems: 'center',
     },
@@ -88,14 +93,27 @@ const useStyles = makeStyles(theme => ({
     },
     headerBar: {
       background: 'transparent',
-      //position: '-webkit-sticky',
-      //position: 'sticky',
-      top: 20,
-      bottom: 20, 
-      paddingTop: '40px',
-      paddingBottom: '40px',
+      position: '-webkit-sticky',
+      height: '200px',
       zIndex: 5,
+      flexDirection: 'column',
+      alignItems: 'center',
+      alignContent: 'center',
+      paddingTop: '40px',
+      backgroundImage: 'url(https://source.unsplash.com/random)',
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+    },
+    title:{
+      color:'white',
+    },
+    body:{
+      display: 'flex',
       justifyContent:'center',
+      flexDirection: 'column',
+      alignContent: 'center',
+      top: 500,
     },
   }));
 
@@ -123,7 +141,7 @@ function Home(){
     }
     useEffect(
       () => {
-        axios.get('http://localhost:3030/api/v1/contacts/')
+        axios.get(`${ecs_END_POINT}/api/v1/contacts/`)
             .then((response) => {
                 //console.log(response.data);
                 setData(response.data); 
@@ -196,7 +214,6 @@ function Home(){
       
     }
     
-    console.log("Parent Render");
     const handleChangeField = (name, mid) => event => {
       event.preventDefault();
       event.persist();
@@ -240,9 +257,9 @@ function Home(){
     }
 
     function handleCloseDeleteYes(){
-      axios.delete('http://localhost:3030/api/v1/contacts/delete/' + id)
+      axios.delete(`${ecs_END_POINT}/api/v1/contacts/delete/` + id)
       .then(function (response) {
-        axios.get('http://localhost:3030/api/v1/contacts/')
+        axios.get(`${ecs_END_POINT}/api/v1/contacts/`)
             .then((response) => {
                 //console.log(response.data);
                 setData(response.data); 
@@ -264,10 +281,10 @@ function Home(){
 
     function replaceObject(datos){
 
-      return axios.put('http://localhost:3030/api/v1/contacts/update',datos)
+      return axios.put(`${ecs_END_POINT}/api/v1/contacts/update`,datos)
       .then(function (response) {
         //console.log(response);
-        axios.get('http://localhost:3030/api/v1/contacts/')
+        axios.get(`${ecs_END_POINT}/api/v1/contacts/`)
             .then((response) => {
                 //console.log(response.data);
                 setData(response.data); 
@@ -287,10 +304,10 @@ function Home(){
 
     async function addObject(datos){
       //console.log(datos);
-      return axios.post('http://localhost:3030/api/v1/contacts/add', datos)
+      return axios.post(`${ecs_END_POINT}/api/v1/contacts/add`, datos)
       .then(function (response) {
         //console.log(response);
-        axios.get('http://localhost:3030/api/v1/contacts/')
+        axios.get(`${ecs_END_POINT}/api/v1/contacts/`)
             .then((response) => {
                 //console.log(response.data);
                 setData(response.data); 
@@ -325,94 +342,109 @@ function Home(){
     }
     return (
       <Grid container className={classes.rootContainer}>
-        <Grid container item className={classes.headerBar} >
-        <Tooltip title="Add New Contact" aria-label="add">
-          <Fab color={'secondary'} aria-label="add" className={classes.iconAdd} onClick={handleNuevo}>
-            <AddIcon style={{width:'50',height:'50'}} />
-          </Fab>
-        </Tooltip>
+      <Grid item>
+          <Typography variant="body1" gutterBottom marked="center" align="center" className={classes.title}>
+            Por políticas de caché, los cambios aplicados se reflejarán después de 30 segundos
+          </Typography>
+          </Grid>
+        <Grid container item className={classes.headerBar} component={Paper} elevation={8}>
+          <Grid item>
+            <Typography variant="h2" gutterBottom marked="center" align="center" className={classes.title}>
+              Contacts
+            </Typography>
+          </Grid>
+          <Grid item>
+          <Tooltip title="Add New Contact" aria-label="add">
+            <Fab color={'secondary'} aria-label="add" className={classes.iconAdd} onClick={handleNuevo}>
+              <AddIcon style={{width:'50',height:'50'}} />
+            </Fab>
+          </Tooltip>
+          </Grid>
+          
         </Grid>
-          <World/>
-        <Dialog
-          open={edit}
-          onClose={() => handleClose(0)}
-          TransitionComponent={Transition}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-          disableBackdropClick = {true}
-        >
-          <DialogTitle id="alert-dialog-title">{"Edit Mode"}</DialogTitle>
-          <DialogContent className={classes.dialogContent}>
-          <EditPerson  person={editPerson} classes={classes} handleChangeField={handleChangeField}/>
-          </DialogContent>
-          <DialogActions>
-          <Button onClick={() => handleClose(1)} autoFocus>
-              Save
-          </Button>
-          <Button onClick={() => handleClose(0)}>
-              Cancel
-          </Button>
-          </DialogActions>
-        </Dialog>
-        <Dialog
-          open={eliminar}
-          //onClose={handleCloseDelete}
-          TransitionComponent={Transition}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-          disableBackdropClick = {true}
-        >
-          <DialogTitle id="alert-dialog-title">{"Are you sure to delete this contact?"}</DialogTitle>
-          <DialogContent className={classes.dialogContent}>
-          </DialogContent>
-          <DialogActions>
-          <Button onClick={handleCloseDeleteYes} autoFocus>
-              Yes
-          </Button>
-          <Button onClick={handleCloseDeleteNo} autoFocus>
-              No
-          </Button>
-          </DialogActions>
-        </Dialog>
-        <Dialog
-          open={nuevo}
-          onClose={handleClose}
-          TransitionComponent={Transition}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-          disableBackdropClick = {true}
-        >
-          <DialogTitle id="alert-dialog-title">{"New Mode"}</DialogTitle>
-          <DialogContent className={classes.dialogContent}>
-          <EditPerson  person={editPerson} classes={classes} handleChangeField={handleChangeField} />
-          </DialogContent>
-          <DialogActions>
-          <Button onClick={() => handleClose(1)} autoFocus>
-              Save
-          </Button>
-          <Button onClick={() => handleClose(0)} autoFocus>
-              Cancel
-          </Button>
-          </DialogActions>
-        </Dialog>
-        <Dialog
-          open={show}
-          onClose={handleClose}
-          TransitionComponent={Transition}
-          aria-labelledby="alert-dialog-title"
-          aria-describedby="alert-dialog-description"
-          disableBackdropClick = {true}
-        >
-          <DialogTitle id="alert-dialog-title">{"Show Mode"}</DialogTitle>
-          <DialogContent className={classes.dialogContent}>
-          <ShowPerson person={editPerson} classes={classes}/>
-          </DialogContent>
-          <DialogActions>
-          <Button onClick={() => handleClose(2)} autoFocus>
-              Dismiss
-          </Button>
-          </DialogActions>
-        </Dialog>
+            
+            <World/>
+        
+          <Dialog
+            open={edit}
+            onClose={() => handleClose(0)}
+            TransitionComponent={Transition}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            disableBackdropClick = {true}
+          >
+            <DialogTitle id="alert-dialog-title">{"Edit Mode"}</DialogTitle>
+            <DialogContent className={classes.dialogContent}>
+            <EditPerson  person={editPerson} classes={classes} handleChangeField={handleChangeField}/>
+            </DialogContent>
+            <DialogActions>
+            <Button onClick={() => handleClose(1)} autoFocus>
+                Save
+            </Button>
+            <Button onClick={() => handleClose(0)}>
+                Cancel
+            </Button>
+            </DialogActions>
+          </Dialog>
+          <Dialog
+            open={eliminar}
+            //onClose={handleCloseDelete}
+            TransitionComponent={Transition}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            disableBackdropClick = {true}
+          >
+            <DialogTitle id="alert-dialog-title">{"Are you sure to delete this contact?"}</DialogTitle>
+            <DialogContent className={classes.dialogContent}>
+            </DialogContent>
+            <DialogActions>
+            <Button onClick={handleCloseDeleteYes} autoFocus>
+                Yes
+            </Button>
+            <Button onClick={handleCloseDeleteNo} autoFocus>
+                No
+            </Button>
+            </DialogActions>
+          </Dialog>
+          <Dialog
+            open={nuevo}
+            onClose={handleClose}
+            TransitionComponent={Transition}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            disableBackdropClick = {true}
+          >
+            <DialogTitle id="alert-dialog-title">{"New Mode"}</DialogTitle>
+            <DialogContent className={classes.dialogContent}>
+            <EditPerson  person={editPerson} classes={classes} handleChangeField={handleChangeField} />
+            </DialogContent>
+            <DialogActions>
+            <Button onClick={() => handleClose(1)} autoFocus>
+                Save
+            </Button>
+            <Button onClick={() => handleClose(0)} autoFocus>
+                Cancel
+            </Button>
+            </DialogActions>
+          </Dialog>
+          <Dialog
+            open={show}
+            onClose={handleClose}
+            TransitionComponent={Transition}
+            aria-labelledby="alert-dialog-title"
+            aria-describedby="alert-dialog-description"
+            disableBackdropClick = {true}
+          >
+            <DialogTitle id="alert-dialog-title">{"Show Mode"}</DialogTitle>
+            <DialogContent className={classes.dialogContent}>
+            <ShowPerson person={editPerson} classes={classes}/>
+            </DialogContent>
+            <DialogActions>
+            <Button onClick={() => handleClose(2)} autoFocus>
+                Dismiss
+            </Button>
+            </DialogActions>
+          </Dialog>
       </Grid>
       );
 }
