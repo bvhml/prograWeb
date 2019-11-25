@@ -1,6 +1,6 @@
-# Project Title
+# PrograWeb FRONTEND
 
-One Paragraph of project description goes here
+This project was developed during the second half of the year 2019 in the course called Programacion Web.
 
 ## Getting Started
 
@@ -8,59 +8,33 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-What things you need to install the software and how to install them
-
-```
-Give examples
-```
+- [Node](https://nodejs.org/es/)
+- [npm](https://www.npmjs.com/)
+- [Docker](https://www.docker.com/)
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
-
-Say what the step will be
-
+If you want to run this project in a local enviroment use:
 ```
-Give the example
+npm run start-dev
 ```
-
-And repeat
-
+If you want to run this project using docker-compose version 3, use:
 ```
-until finished
+npm run docker:prod
 ```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
 ## Deployment
 
-Add additional notes about how to deploy this on a live system
+You can deploy using docker-compose and ECS from AWS. See step by step this AWS documentation to deploy an FARGATE cluster using this project:
+```
+https://docs.aws.amazon.com/es_es/AmazonECS/latest/developerguide/ecs-cli-tutorial-fargate.html
+```
 
 ## Built With
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+* [Node](https://nodejs.org/es/) - JavaScript runtime built.
+* [npm](https://www.npmjs.com/) - Software registry
+* [React.js](https://reactjs.org/) - A JavaScript library for building user interfaces
+* [Material UI](https://material-ui.com/getting-started/installation/) - The world's most popular React UI framework.
 
 ## Contributing
 
@@ -68,13 +42,14 @@ Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c6
 
 ## Versioning
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
+We use [GitHub](https://github.com/) for versioning. For the versions available, see the [tags on this repository](https://github.com/bvhml/prograWeb/projects/tags). 
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Byron Victor Hugo Morales Lemus** - *Full work* - [bvhml](https://github.com/bvhml)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
+See also the list of [contributors](https://github.com/bvhml/prograWebBackend/graphs/contributors) who participated in this project.
+
 
 ## License
 
@@ -82,7 +57,4 @@ This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
-
+* Happy hacking :)
