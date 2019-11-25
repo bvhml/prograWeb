@@ -23,7 +23,7 @@ import axios from 'axios'
 //import { CONNREFUSED } from 'dns';
 
 
-const ecs_END_POINT = 'http://3.92.211.28:3030';
+const ecs_END_POINT = 'http://18.215.184.82:3030';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -99,11 +99,19 @@ const useStyles = makeStyles(theme => ({
       flexDirection: 'column',
       alignItems: 'center',
       alignContent: 'center',
-      paddingTop: '40px',
       backgroundImage: 'url(https://source.unsplash.com/random)',
       backgroundRepeat: 'no-repeat',
       backgroundSize: 'cover',
       backgroundPosition: 'center',
+    },
+    contentHeader: {
+      height: '100%',
+      width: '100%',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      color: 'white',
+      alignItems: 'center',
+      alignContent: 'center',
+      flexDirection: 'column',
     },
     title:{
       color:'white',
@@ -348,19 +356,18 @@ function Home(){
           </Typography>
           </Grid>
         <Grid container item className={classes.headerBar} component={Paper} elevation={8}>
-          <Grid item>
-            <Typography variant="h2" gutterBottom marked="center" align="center" className={classes.title}>
-              Contacts
-            </Typography>
-          </Grid>
-          <Grid item>
-          <Tooltip title="Add New Contact" aria-label="add">
-            <Fab color={'secondary'} aria-label="add" className={classes.iconAdd} onClick={handleNuevo}>
-              <AddIcon style={{width:'50',height:'50'}} />
-            </Fab>
-          </Tooltip>
-          </Grid>
-          
+            <Grid container item className={classes.contentHeader}>
+              <Grid container item style={{alignItems:'center', flexDirection:'column', justifyContent:'center', paddingTop:'40px'}}>
+                <Typography variant="h2" gutterBottom marked="center" align="center" className={classes.title}>
+                  Contacts
+                </Typography>
+                <Tooltip title="Add New Contact" aria-label="add">
+                  <Fab color={'secondary'} aria-label="add" className={classes.iconAdd} onClick={handleNuevo}>
+                    <AddIcon style={{width:'50',height:'50'}} />
+                  </Fab>
+                </Tooltip>
+              </Grid>
+            </Grid>
         </Grid>
             
             <World/>
