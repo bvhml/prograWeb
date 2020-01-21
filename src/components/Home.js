@@ -18,6 +18,7 @@ import Tooltip from '@material-ui/core/Tooltip';
 import CircularProgress from '@material-ui/core/CircularProgress';
 //import ContactHelpers from '../services/contactsHelpers'
 import axios from 'axios'
+import log from './log';
 //import { CONNREFUSED } from 'dns';
 
 const useStyles = makeStyles(theme => ({
@@ -112,26 +113,28 @@ function Home(){
     const [ id, setId ] = useState(0);
     const [ countP, setcountP] = useState(6);
     const [ eliminar, setEliminar ] = useState(false);
-    const [ editPerson, setEditPerson ] = useState({ _id:'', pk:'',gen:'',name:{title:'',first:'',last:'',},email:'',id:{name:'',value:''},picture:{large:'',medium:'',thumbnail:''},nat:''});
     const [ data, setData ] = useState(null);
+    const [ editPerson, setEditPerson ] = useState({ _id:'', pk:'',gen:'',name:{title:'',first:'',last:'',},email:'',id:{name:'',value:''},picture:{large:'',medium:'',thumbnail:''},nat:''});
     const classes = useStyles();
-    var World = null;
+    let World = null;
+    
 
     function handleDelete(index) {
       setId(index);
       setEliminar(true);
     }
-    useEffect(
-      () => {
-        axios.get('http://localhost:3030/api/v1/contacts/')
+
+    useEffect(() => {
+      
+      axios.get('http://localhost:3030/api/v1/contacts/')
             .then((response) => {
                 //console.log(response.data);
-                setData(response.data); 
+                setData(response.data);
             })
             .catch(function (error) {
                 //console.log(error);
             });
-    },[show, edit]);
+    },[edit])
 
     async function handleEdit(index) {
       var persona = (data.filter(e => e._id === index ))[0];
@@ -157,12 +160,14 @@ function Home(){
       }));
 
       setEdit(true);
+      console.log("Edit true")
     }
 
     function handleClose(i){
 
       if ((editPerson.pk !== '') && (i === 1)) {
         replaceObject(editPerson);
+        console.log("Edit false por handleClose")
         setEdit(false);
         setEditPerson(emptyPerson);
         return true;
@@ -187,7 +192,7 @@ function Home(){
         setShow(false);
       }
       else{
-        editPerson.pk === '' ?  setNuevo(false):setEdit(false);
+        editPerson.pk === '' ?  setNuevo(false):console.log("Edit False porque no hay pk"); setEdit(false);
       }
 
       setEditPerson(emptyPerson);
@@ -196,17 +201,17 @@ function Home(){
       
     }
     
-    console.log("Parent Render");
+    //console.log("Parent Render");
     const handleChangeField = (name, mid) => event => {
-      event.preventDefault();
-      event.persist();
-
+      
       if (mid !== '') {
         setEditPerson(e => ({ ...e, [name]: { ...e[name], [mid]: event.target.value} })); 
       }
       else{
         setEditPerson(e => ({ ...e, [name]: event.target.value })); 
       }
+      event.preventDefault();
+      event.stopPropagation();
       
     };
 
@@ -242,6 +247,7 @@ function Home(){
     function handleCloseDeleteYes(){
       axios.delete('http://localhost:3030/api/v1/contacts/delete/' + id)
       .then(function (response) {
+        /*
         axios.get('http://localhost:3030/api/v1/contacts/')
             .then((response) => {
                 //console.log(response.data);
@@ -250,6 +256,7 @@ function Home(){
             .catch(function (error) {
                 //console.log(error);
             });
+            */
       })
       .catch(function (error) {
         console.log(error);
@@ -267,6 +274,7 @@ function Home(){
       return axios.put('http://localhost:3030/api/v1/contacts/update',datos)
       .then(function (response) {
         //console.log(response);
+        /*
         axios.get('http://localhost:3030/api/v1/contacts/')
             .then((response) => {
                 //console.log(response.data);
@@ -275,6 +283,8 @@ function Home(){
             .catch(function (error) {
                 //console.log(error);
             });
+            */
+            console.log("Edit false")
         setEdit(false);
       })
       .catch(function (error) {
@@ -290,6 +300,7 @@ function Home(){
       return axios.post('http://localhost:3030/api/v1/contacts/add', datos)
       .then(function (response) {
         //console.log(response);
+        /*
         axios.get('http://localhost:3030/api/v1/contacts/')
             .then((response) => {
                 //console.log(response.data);
@@ -298,6 +309,7 @@ function Home(){
             .catch(function (error) {
                 //console.log(error);
             });
+            */
       })
       .catch(function (error) {
         console.log(error);
@@ -308,14 +320,14 @@ function Home(){
     
     if (data !== null) {
       World = () => { 
-  
-        let result = data.map(person => {
-          return (<Person person={person} classes={classes} handleDelete={handleDelete} handleEdit={handleEdit} showPerson={showPerson} key={person.pk}/>);
-          });
-  
-        return (<Grid container>{ result } </Grid>)
-  
-        
+        console.log(show);
+        if (!show) {
+          console.log("Render World");
+          let result = data.map(person => {
+            return (<Person person={person} classes={classes} handleDelete={handleDelete} handleEdit={handleEdit} showPerson={showPerson} key={person.pk}/>);
+            });
+            return (<Grid container>{ result } </Grid>)
+        }
       };
     }
     else{
@@ -332,7 +344,7 @@ function Home(){
           </Fab>
         </Tooltip>
         </Grid>
-          <World/>
+          {World()}
         <Dialog
           open={edit}
           onClose={() => handleClose(0)}
@@ -417,4 +429,4 @@ function Home(){
       );
 }
 
-export default withRoot(Home);
+export default log(withRoot(Home));
