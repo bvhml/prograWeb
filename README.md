@@ -1,68 +1,60 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# PrograWeb FRONTEND
 
-## Available Scripts
+This project was developed during the second half of the year 2019 in the course called Programacion Web.
 
-In the project directory, you can run:
+## Getting Started
 
-### `npm start`
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+### Prerequisites
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+- [Node](https://nodejs.org/es/)
+- [npm](https://www.npmjs.com/)
+- [Docker](https://www.docker.com/)
 
-### `npm test`
+### Installing
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+If you want to run this project in a local enviroment use:
+```
+npm run start-dev
+```
+If you want to run this project using docker-compose version 3, use:
+```
+npm run docker:prod
+```
+## Deployment
 
-### `npm run build`
+You can deploy using docker-compose and ECS from AWS. See step by step this AWS documentation to deploy an FARGATE cluster using this project:
+```
+https://docs.aws.amazon.com/es_es/AmazonECS/latest/developerguide/ecs-cli-tutorial-fargate.html
+```
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Built With
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+* [Node](https://nodejs.org/es/) - JavaScript runtime built.
+* [npm](https://www.npmjs.com/) - Software registry
+* [React.js](https://reactjs.org/) - A JavaScript library for building user interfaces
+* [Material UI](https://material-ui.com/getting-started/installation/) - The world's most popular React UI framework.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Contributing
 
-### `npm run eject`
+Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+## Versioning
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+We use [GitHub](https://github.com/) for versioning. For the versions available, see the [tags on this repository](https://github.com/bvhml/prograWeb/projects/tags). 
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+## Authors
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+* **Byron Victor Hugo Morales Lemus** - *Full work* - [bvhml](https://github.com/bvhml)
 
-## Learn More
+See also the list of [contributors](https://github.com/bvhml/prograWebBackend/graphs/contributors) who participated in this project.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+## License
 
-### Code Splitting
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+## Acknowledgments
 
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+* Happy hacking :)

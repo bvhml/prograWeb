@@ -16,10 +16,15 @@ import AddIcon from '@material-ui/icons/Add';
 import Fab from '@material-ui/core/Fab';
 import Tooltip from '@material-ui/core/Tooltip';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Typography from '@material-ui/core/Typography';
+import Paper from '@material-ui/core/Paper';
 //import ContactHelpers from '../services/contactsHelpers'
 import axios from 'axios'
 import log from './log';
 //import { CONNREFUSED } from 'dns';
+
+
+const ecs_END_POINT = 'http://18.215.184.82:3030';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -27,7 +32,7 @@ const useStyles = makeStyles(theme => ({
     },
     rootContainer: {
       justifyContent: 'center',
-      padding:'6vh',
+      padding:'2vh',
       flexDirection: 'column',
       alignItems: 'center',
     },
@@ -89,14 +94,35 @@ const useStyles = makeStyles(theme => ({
     },
     headerBar: {
       background: 'transparent',
-      //position: '-webkit-sticky',
-      //position: 'sticky',
-      top: 20,
-      bottom: 20, 
-      paddingTop: '40px',
-      paddingBottom: '40px',
+      position: '-webkit-sticky',
+      height: '200px',
       zIndex: 5,
+      flexDirection: 'column',
+      alignItems: 'center',
+      alignContent: 'center',
+      backgroundImage: 'url(https://source.unsplash.com/random)',
+      backgroundRepeat: 'no-repeat',
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+    },
+    contentHeader: {
+      height: '100%',
+      width: '100%',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      color: 'white',
+      alignItems: 'center',
+      alignContent: 'center',
+      flexDirection: 'column',
+    },
+    title:{
+      color:'white',
+    },
+    body:{
+      display: 'flex',
       justifyContent:'center',
+      flexDirection: 'column',
+      alignContent: 'center',
+      top: 500,
     },
   }));
 
@@ -123,10 +149,9 @@ function Home(){
       setId(index);
       setEliminar(true);
     }
-
-    useEffect(() => {
-      
-      axios.get('http://localhost:3030/api/v1/contacts/')
+    useEffect(
+      () => {
+        axios.get(`${ecs_END_POINT}/api/v1/contacts/`)
             .then((response) => {
                 //console.log(response.data);
                 setData(response.data);
@@ -201,7 +226,6 @@ function Home(){
       
     }
     
-    //console.log("Parent Render");
     const handleChangeField = (name, mid) => event => {
       
       if (mid !== '') {
@@ -245,10 +269,10 @@ function Home(){
     }
 
     function handleCloseDeleteYes(){
-      axios.delete('http://localhost:3030/api/v1/contacts/delete/' + id)
+      axios.delete(`${ecs_END_POINT}/api/v1/contacts/delete/` + id)
       .then(function (response) {
         /*
-        axios.get('http://localhost:3030/api/v1/contacts/')
+        axios.get(`${ecs_END_POINT}/api/v1/contacts/`)
             .then((response) => {
                 //console.log(response.data);
                 setData(response.data); 
@@ -271,11 +295,11 @@ function Home(){
 
     function replaceObject(datos){
 
-      return axios.put('http://localhost:3030/api/v1/contacts/update',datos)
+      return axios.put(`${ecs_END_POINT}/api/v1/contacts/update`,datos)
       .then(function (response) {
         //console.log(response);
         /*
-        axios.get('http://localhost:3030/api/v1/contacts/')
+        axios.get(`${ecs_END_POINT}/api/v1/contacts/`)
             .then((response) => {
                 //console.log(response.data);
                 setData(response.data); 
@@ -297,11 +321,11 @@ function Home(){
 
     async function addObject(datos){
       //console.log(datos);
-      return axios.post('http://localhost:3030/api/v1/contacts/add', datos)
+      return axios.post(`${ecs_END_POINT}/api/v1/contacts/add`, datos)
       .then(function (response) {
         //console.log(response);
         /*
-        axios.get('http://localhost:3030/api/v1/contacts/')
+        axios.get(`${ecs_END_POINT}/api/v1/contacts/`)
             .then((response) => {
                 //console.log(response.data);
                 setData(response.data); 
@@ -337,12 +361,24 @@ function Home(){
     }
     return (
       <Grid container className={classes.rootContainer}>
-        <Grid container item className={classes.headerBar} >
-        <Tooltip title="Add New Contact" aria-label="add">
-          <Fab color={'secondary'} aria-label="add" className={classes.iconAdd} onClick={handleNuevo}>
-            <AddIcon style={{width:'50',height:'50'}} />
-          </Fab>
-        </Tooltip>
+      <Grid item>
+          <Typography variant="body1" gutterBottom marked="center" align="center" className={classes.title}>
+            Por políticas de caché, los cambios aplicados se reflejarán después de 30 segundos
+          </Typography>
+          </Grid>
+        <Grid container item className={classes.headerBar} component={Paper} elevation={8}>
+            <Grid container item className={classes.contentHeader}>
+              <Grid container item style={{alignItems:'center', flexDirection:'column', justifyContent:'center', paddingTop:'40px'}}>
+                <Typography variant="h2" gutterBottom marked="center" align="center" className={classes.title}>
+                  Contacts
+                </Typography>
+                <Tooltip title="Add New Contact" aria-label="add">
+                  <Fab color={'secondary'} aria-label="add" className={classes.iconAdd} onClick={handleNuevo}>
+                    <AddIcon style={{width:'50',height:'50'}} />
+                  </Fab>
+                </Tooltip>
+              </Grid>
+            </Grid>
         </Grid>
           {World()}
         <Dialog
