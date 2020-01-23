@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-function Example() {
+const Example = React.memo((props) => {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -16,5 +16,5 @@ function Example() {
       </button>
     </div>
   );
-}
+}, true)
 export default Example;

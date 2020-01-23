@@ -24,7 +24,7 @@ import log from './log';
 //import { CONNREFUSED } from 'dns';
 
 
-const ecs_END_POINT = 'http://18.215.184.82:3030';
+const ecs_END_POINT = 'http://localhost:3030';
 
 const useStyles = makeStyles(theme => ({
     root: {
@@ -130,7 +130,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-function Home(){
+const Home = () => {
     
     const emptyPerson =  { _id:'', pk:'',gen:'',name:{title:'',first:'',last:'',},email:'',id:{name:'',value:''},picture:{large:'',medium:'',thumbnail:''},nat:''};
     const [ edit, setEdit ] = useState(false);
@@ -141,25 +141,33 @@ function Home(){
     const [ eliminar, setEliminar ] = useState(false);
     const [ data, setData ] = useState(null);
     const [ editPerson, setEditPerson ] = useState({ _id:'', pk:'',gen:'',name:{title:'',first:'',last:'',},email:'',id:{name:'',value:''},picture:{large:'',medium:'',thumbnail:''},nat:''});
+    const [ refresh, setRefresh ] = useState(true);
     const classes = useStyles();
     let World = null;
     
+    useEffect(() => {
+      if (refresh){
+        console.log("GET CONTACTS");
+        getContactsData();
+        setRefresh(!refresh);
+      }
+    },[ refresh ])
+
+    async function getContactsData(){
+      return  axios.get(`${ecs_END_POINT}/api/v1/contacts/`)
+      .then((response) => {
+          //console.log(response.data);
+          setData(response.data);
+      })
+      .catch(function (error) {
+          //console.log(error);
+      });
+    }
 
     function handleDelete(index) {
       setId(index);
       setEliminar(true);
     }
-    useEffect(
-      () => {
-        axios.get(`${ecs_END_POINT}/api/v1/contacts/`)
-            .then((response) => {
-                //console.log(response.data);
-                setData(response.data);
-            })
-            .catch(function (error) {
-                //console.log(error);
-            });
-    },[edit])
 
     async function handleEdit(index) {
       var persona = (data.filter(e => e._id === index ))[0];
@@ -191,7 +199,6 @@ function Home(){
     function handleClose(i){
 
       if ((editPerson.pk !== '') && (i === 1)) {
-        replaceObject(editPerson);
         console.log("Edit false por handleClose")
         setEdit(false);
         setEditPerson(emptyPerson);
@@ -227,16 +234,15 @@ function Home(){
     }
     
     const handleChangeField = (name, mid) => event => {
-      
+      event.preventDefault();
+      event.stopPropagation();
+      event.persist();
       if (mid !== '') {
         setEditPerson(e => ({ ...e, [name]: { ...e[name], [mid]: event.target.value} })); 
       }
       else{
         setEditPerson(e => ({ ...e, [name]: event.target.value })); 
       }
-      event.preventDefault();
-      event.stopPropagation();
-      
     };
 
     function handleNuevo(i){
@@ -271,6 +277,7 @@ function Home(){
     function handleCloseDeleteYes(){
       axios.delete(`${ecs_END_POINT}/api/v1/contacts/delete/` + id)
       .then(function (response) {
+        setRefresh(true);
         /*
         axios.get(`${ecs_END_POINT}/api/v1/contacts/`)
             .then((response) => {
@@ -293,36 +300,11 @@ function Home(){
       setEliminar(false);
     }
 
-    function replaceObject(datos){
-
-      return axios.put(`${ecs_END_POINT}/api/v1/contacts/update`,datos)
-      .then(function (response) {
-        //console.log(response);
-        /*
-        axios.get(`${ecs_END_POINT}/api/v1/contacts/`)
-            .then((response) => {
-                //console.log(response.data);
-                setData(response.data); 
-            })
-            .catch(function (error) {
-                //console.log(error);
-            });
-            */
-            console.log("Edit false")
-        setEdit(false);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-
-      
-      
-    }
-
     async function addObject(datos){
       //console.log(datos);
       return axios.post(`${ecs_END_POINT}/api/v1/contacts/add`, datos)
       .then(function (response) {
+        setRefresh(true);
         //console.log(response);
         /*
         axios.get(`${ecs_END_POINT}/api/v1/contacts/`)
@@ -340,30 +322,29 @@ function Home(){
       });
     }
 
+      if (data !== null) {
+        World = () => {
+            console.log("Render World");
+            console.log(refresh);
+            let result = data.map(person => {
+              return (<Person person={person} classes={classes} handleDelete={handleDelete} handleEdit={handleEdit} showPerson={showPerson} key={person.pk}/>);
+              });
+              console.log(result)
+              return (<Grid container>{ result } </Grid>)
+        };
+      }
+      else{
+        World = () => { 
+          return (<CircularProgress disableShrink className={ classes.progress } color="secondary" size={"75px"}/>)
+        };
+      }
+      
     
-    
-    if (data !== null) {
-      World = () => { 
-        console.log(show);
-        if (!show) {
-          console.log("Render World");
-          let result = data.map(person => {
-            return (<Person person={person} classes={classes} handleDelete={handleDelete} handleEdit={handleEdit} showPerson={showPerson} key={person.pk}/>);
-            });
-            return (<Grid container>{ result } </Grid>)
-        }
-      };
-    }
-    else{
-      World = () => { 
-        return (<CircularProgress disableShrink className={ classes.progress } color="secondary" size={"75px"}/>)
-      };
-    }
     return (
       <Grid container className={classes.rootContainer}>
       <Grid item>
           <Typography variant="body1" gutterBottom marked="center" align="center" className={classes.title}>
-            Por políticas de caché, los cambios aplicados se reflejarán después de 30 segundos
+            Por políticas de caché, los cambios aplicados se reflejarán después de 10 segundos
           </Typography>
           </Grid>
         <Grid container item className={classes.headerBar} component={Paper} elevation={8}>
@@ -391,12 +372,10 @@ function Home(){
         >
           <DialogTitle id="alert-dialog-title">{"Edit Mode"}</DialogTitle>
           <DialogContent className={classes.dialogContent}>
-          <EditPerson  person={editPerson} classes={classes} handleChangeField={handleChangeField}/>
+          <EditPerson  person={editPerson} classes={classes} handleChangeField={handleChangeField} handleClose={handleClose} ecs_END_POINT={ecs_END_POINT}/>
           </DialogContent>
           <DialogActions>
-          <Button onClick={() => handleClose(1)} autoFocus>
-              Save
-          </Button>
+          
           <Button onClick={() => handleClose(0)}>
               Cancel
           </Button>

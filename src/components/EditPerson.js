@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import withRoot from '../withRoot'
 import Grid from '@material-ui/core/Grid';
-import Fab from '@material-ui/core/Fab';
+import { Fab, Button } from '@material-ui/core';
 import Avatar from '@material-ui/core/Avatar';
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
 import { email, required } from '../form/validation';
+import axios from 'axios'
 // eslint-disable-next-line 
 import { Field, Form, FormSpy } from 'react-final-form';
 //import RFTextField from '../form/RFTextField'
@@ -21,7 +22,23 @@ const genders = [
     },
   ];
 
-function EditPerson({ person, classes, handleChangeField}){
+
+const EditPerson = ({ person, classes, handleClose, ecs_END_POINT }) => {
+
+    const [ editPerson, setEditPerson ] = useState(null);
+
+    if (editPerson === null){
+        setEditPerson(person);
+    }
+    const handleChangeField = (name, mid) => event => {
+        event.persist();
+        if (mid !== '') {
+          setEditPerson(e => ({ ...e, [name]: { ...e[name], [mid]: event.target.value} })); 
+        }
+        else{
+          setEditPerson(e => ({ ...e, [name]: event.target.value })); 
+        }
+      };
 
     const validate = values => {
         const errors = required(['email', 'title'], values);
@@ -40,8 +57,35 @@ function EditPerson({ person, classes, handleChangeField}){
       const [sent, setSent] = React.useState(false);
 
       const handleSubmit = () => {
-        setSent(true);
+        console.log("Submitted");
+        replaceEditedPerson(editPerson);
+        handleClose(1);
       };
+
+      function replaceEditedPerson(datos){
+
+        return axios.put(`${ecs_END_POINT}/api/v1/contacts/update`,datos)
+        .then(function (response) {
+          //console.log(response);
+          /*
+          axios.get(`${ecs_END_POINT}/api/v1/contacts/`)
+              .then((response) => {
+                  //console.log(response.data);
+                  setData(response.data); 
+              })
+              .catch(function (error) {
+                  //console.log(error);
+              });
+              */
+              console.log("Edit false replaceEditedPerson")
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+  
+        
+        
+      }
 
     return (
         <Form onSubmit = {handleSubmit} subscription={{ submitting: true }} validate={validate}>
@@ -177,6 +221,9 @@ function EditPerson({ person, classes, handleChangeField}){
                             ))}
                         </TextField>
                         </Grid>
+                        <Button onClick={() => handleSubmit()} autoFocus>
+                            Save
+                        </Button>
                     </Grid>
                     </Grid>
                 </Grid>
